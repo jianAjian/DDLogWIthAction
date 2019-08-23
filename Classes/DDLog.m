@@ -1116,7 +1116,7 @@ NSString * __nullable DDExtractFileNameWithoutExtension(const char *filePath, BO
                             tag:(id)tag
                         options:(DDLogMessageOptions)options
                       timestamp:(NSDate *)timestamp {
-    return [self initWithMessage:message level:level flag:flag context:context file:file function:function line:line tag:tag options:options timestamp:timestamp];
+    return [self initWithMessage:message level:level flag:flag context:context file:file function:function line:line tag:tag action:nil options:options timestamp:timestamp];
 }
 
 
