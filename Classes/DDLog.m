@@ -1184,6 +1184,7 @@ NSString * __nullable DDExtractFileNameWithoutExtension(const char *filePath, BO
     newMessage->_function = _function;
     newMessage->_line = _line;
     newMessage->_tag = _tag;
+    newMessage->_action = _action;
     newMessage->_options = _options;
     newMessage->_timestamp = _timestamp;
     newMessage->_threadID = _threadID;
