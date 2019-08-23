@@ -249,6 +249,19 @@ FOUNDATION_EXTERN NSString * __nullable DDExtractFileNameWithoutExtension(const 
         tag:(id __nullable)tag
      format:(NSString *)format, ... NS_FORMAT_FUNCTION(9,10);
 
+
++ (void)log:(BOOL)asynchronous
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id __nullable)tag
+    action:(id __nullable)action
+     format:(NSString *)format, ...  NS_FORMAT_FUNCTION(10,11);
+
+
 /**
  * Logging Primitive.
  *
@@ -823,6 +836,18 @@ typedef NS_OPTIONS(NSInteger, DDLogMessageOptions){
                        function:(NSString * __nullable)function
                            line:(NSUInteger)line
                             tag:(id __nullable)tag
+                            action:(id __nullable)action
+                        options:(DDLogMessageOptions)options
+                      timestamp:(NSDate * __nullable)timestamp NS_DESIGNATED_INITIALIZER;
+
+- (instancetype)initWithMessage:(NSString *)message
+                          level:(DDLogLevel)level
+                           flag:(DDLogFlag)flag
+                        context:(NSInteger)context
+                           file:(NSString *)file
+                       function:(NSString * __nullable)function
+                           line:(NSUInteger)line
+                            tag:(id __nullable)tag
                         options:(DDLogMessageOptions)options
                       timestamp:(NSDate * __nullable)timestamp NS_DESIGNATED_INITIALIZER;
 
@@ -842,6 +867,7 @@ typedef NS_OPTIONS(NSInteger, DDLogMessageOptions){
 @property (readonly, nonatomic) NSString * __nullable function;
 @property (readonly, nonatomic) NSUInteger line;
 @property (readonly, nonatomic) id __nullable tag;
+@property (readonly, nonatomic) id __nullable action;
 @property (readonly, nonatomic) DDLogMessageOptions options;
 @property (readonly, nonatomic) NSDate *timestamp;
 @property (readonly, nonatomic) NSString *threadID; // ID as it appears in NSLog calculated from the machThreadID

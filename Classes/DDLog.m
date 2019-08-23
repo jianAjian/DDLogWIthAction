@@ -402,6 +402,44 @@ static NSUInteger _numProcessors;
     }
 }
 
++ (void)log:(BOOL)asynchronous
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id __nullable)tag
+     action:(id __nullable)action
+     format:(NSString *)format, ...{
+    va_list args;
+    
+    if (format) {
+        va_start(args, format);
+        
+        NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+        
+        va_end(args);
+        
+        va_start(args, format);
+        
+        [self log:asynchronous
+          message:message
+            level:level
+             flag:flag
+          context:context
+             file:file
+         function:function
+             line:line
+              tag:tag
+           action:action];
+        
+        va_end(args);
+    }
+}
+
+
+
 - (void)log:(BOOL)asynchronous
       level:(DDLogLevel)level
        flag:(DDLogFlag)flag
@@ -485,6 +523,21 @@ static NSUInteger _numProcessors;
     [self.sharedInstance log:asynchronous message:message level:level flag:flag context:context file:file function:function line:line tag:tag];
 }
 
++ (void)log:(BOOL)asynchronous
+    message:(NSString *)message
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id)tag
+     action:(id)action
+{
+    [self.sharedInstance log:asynchronous message:message level:level flag:flag context:context file:file function:function line:line tag:tag];
+}
+
+
 - (void)log:(BOOL)asynchronous
     message:(NSString *)message
       level:(DDLogLevel)level
@@ -507,6 +560,34 @@ static NSUInteger _numProcessors;
 
     [self queueLogMessage:logMessage asynchronously:asynchronous];
 }
+
+- (void)log:(BOOL)asynchronous
+    message:(NSString *)message
+      level:(DDLogLevel)level
+       flag:(DDLogFlag)flag
+    context:(NSInteger)context
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+        tag:(id)tag
+     action:(id)action
+{
+    DDLogMessage *logMessage = [[DDLogMessage alloc] initWithMessage:message
+                                                               level:level
+                                                                flag:flag
+                                                             context:context
+                                                                file:[NSString stringWithFormat:@"%s", file]
+                                                            function:[NSString stringWithFormat:@"%s", function]
+                                                                line:line
+                                                                 tag:tag
+                                                                 action:action
+                                                             options:(DDLogMessageOptions)0
+                                                           timestamp:nil];
+    
+    [self queueLogMessage:logMessage asynchronously:asynchronous];
+}
+
+
 
 + (void)log:(BOOL)asynchronous
     message:(DDLogMessage *)logMessage {
@@ -1035,6 +1116,21 @@ NSString * __nullable DDExtractFileNameWithoutExtension(const char *filePath, BO
                             tag:(id)tag
                         options:(DDLogMessageOptions)options
                       timestamp:(NSDate *)timestamp {
+    return [self initWithMessage:message level:level flag:flag context:context file:file function:function line:line tag:tag options:options timestamp:timestamp];
+}
+
+
+- (instancetype)initWithMessage:(NSString *)message
+                          level:(DDLogLevel)level
+                           flag:(DDLogFlag)flag
+                        context:(NSInteger)context
+                           file:(NSString *)file
+                       function:(NSString *)function
+                           line:(NSUInteger)line
+                            tag:(id)tag
+                            action:(id)action
+                        options:(DDLogMessageOptions)options
+                      timestamp:(NSDate *)timestamp {
     if ((self = [super init])) {
         BOOL copyMessage = (options & DDLogMessageDontCopyMessage) == 0;
         _message      = copyMessage ? [message copy] : message;
@@ -1050,6 +1146,7 @@ NSString * __nullable DDExtractFileNameWithoutExtension(const char *filePath, BO
 
         _line         = line;
         _tag          = tag;
+        _action      = action;
         _options      = options;
         _timestamp    = timestamp ?: [NSDate new];
 
