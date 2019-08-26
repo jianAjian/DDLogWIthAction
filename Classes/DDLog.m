@@ -534,7 +534,7 @@ static NSUInteger _numProcessors;
         tag:(id)tag
      action:(id)action
 {
-    [self.sharedInstance log:asynchronous message:message level:level flag:flag context:context file:file function:function line:line tag:tag];
+    [self.sharedInstance log:asynchronous message:message level:level flag:flag context:context file:file function:function line:line tag:tag action:action];
 }
 
 
